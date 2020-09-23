@@ -14,7 +14,7 @@ GO
 USE TurkishAir
 GO
 
-
+	
 
 --CREAREA TABELELOR
 CREATE TABLE Passengers(
