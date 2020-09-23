@@ -1,0 +1,129 @@
+--CREAREA BAZEI DE DATE
+USE master
+GO
+IF exists(
+	SELECT *FROM sys.databases WHERE name='TurkishAir')
+BEGIN
+		ALTER DATABASE TurkishAir SET single_user
+		WITH ROLLBACK IMMEDIATE
+		DROP DATABASE TurkishAir
+		END
+GO
+CREATE DATABASE TurkishAir
+GO
+USE TurkishAir
+GO
+
+
+
+--CREAREA TABELELOR
+CREATE TABLE Passengers(
+	Id_Passenger INT NOT NULL,
+	first_name NVARCHAR(20),
+	last_name NVARCHAR(20),
+	middle_name NVARCHAR(20),
+	phone NVARCHAR(20),				-- min length = 10
+	email NVARCHAR(20),				-- CHECK if exist @, min length = 10  [maybe chiar o functie]
+	condition NVARCHAR(20) NOT NULL,			-- Adult/Child/Infant
+	baggage INT,			-- Tipul de bagaj   mic/mare/animal/lipseste     DEFAULT
+	Id_Flight INT NOT NULL
+
+	/* 
+		Functie care verifica daca
+			adult 12+ ani
+			copil 2-12 ani
+			infant 2- ani
+	*/	
+)
+
+CREATE TABLE Countries(
+	Id_Country NVARCHAR(3) NOT NULL,      -- Check max length = 3
+	country_name NVARCHAR(20) NOT NULL 
+)
+
+CREATE TABLE Planes(
+	Id_Plane INT PRIMARY KEY NOT NULL,
+	plane_name NVARCHAR(20) NOT NULL,
+	model NVARCHAR(20) NOT NULL,
+	capacity INT NOT NULL,
+	is_active BIT NOT NULL				-- 0, 1, NULL
+)
+
+CREATE TABLE Pilots(
+	Id_Pilot INT PRIMARY KEY NOT NULL,
+	first_name NVARCHAR(20) NOT NULL,
+	last_name NVARCHAR(20) NOT NULL,
+	middle_name NVARCHAR(20) NOT NULL,
+	age INT NOT NULL,							-- Radius 20 - 50
+	sallary INT NOT NULL,
+	Id_Plane INT NOT NULL
+)
+
+CREATE TABLE Stewardess(
+	Id_Stewardess INT PRIMARY KEY NOT NULL,
+	first_name NVARCHAR(20) NOT NULL,
+	last_name NVARCHAR(20) NOT NULL,
+	middle_name NVARCHAR(20) NOT NULL,		
+	age INT NOT NULL,							-- Radius 20 - 50
+	sallary INT NOT NULL,
+	Id_Plane INT NOT NULL
+)
+
+CREATE TABLE Flights(
+	Id_Flight INT PRIMARY KEY NOT NULL,				-- CurrentData + Id_Plane + Id_Country	
+	country_a NVARCHAR(20) NOT NULL,
+	country_b NVARCHAR(20) NOT NULL,
+	start_flight DATE NOT NULL,
+	end_flight DATE NOT NULL,
+	Id_Plane INT NOT NULL,
+	Id_Pilots INT NOT NULL
+)
+
+
+
+
+/*
+	Tables
+		Bussines Class
+		Econom Class 
+		Stewardess_Plane
+		Prim_Pilot
+		Second_Pilot
+	
+	
+	___ADD NOT NULL___
+
+	Determinarea pilotilor
+		Primary
+		Secondary
+
+
+	!!!
+		La bord sunt mai multe stewardese trebuie de rezolvat problema asta
+		Tabel unul la mai multi
+	!!!
+
+
+	Tipul calatoriei:
+		Dus-intors
+		Singura directie
+		Multisegment
+
+	
+	Clasa 
+		Econom		(E)
+		Bussiness	(B)
+		First		(F)
+
+
+	Info Pasageri +
+		Copil/Adult
+		Bagaj info
+
+	Info Zbor +
+		Pretul
+		Ora
+
+*/
+
+
