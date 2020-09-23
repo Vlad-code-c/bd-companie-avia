@@ -1,0 +1,144 @@
+--CREAREA BAZEI DE DATE
+USE master
+GO
+IF exists(
+	SELECT *FROM sys.databases WHERE name='TurkishAir')
+BEGIN
+		ALTER DATABASE TurkishAir SET single_user
+		WITH ROLLBACK IMMEDIATE
+		DROP DATABASE TurkishAir
+		END
+GO
+CREATE DATABASE TurkishAir
+GO
+USE TurkishAir
+GO
+
+
+
+--CREAREA TABELELOR
+CREATE TABLE Passengers(
+	Id_Passenger INT PRIMARY KEY NOT NULL,
+	first_name NVARCHAR(20),
+	last_name NVARCHAR(20),
+	middle_name NVARCHAR(20),
+	phone NVARCHAR(20),	
+	email NVARCHAR(20),				
+	posture INT NOT NULL,			-- Adult/Child/Infant     
+	baggage INT DEFAULT 0,			-- Tipul de bagaj		mic/mare/animal/lipseste   
+	Id_Flight INT NOT NULL,
+
+	CONSTRAINT MG CHECK(
+		CHARINDEX('@', email) = 1 AND 
+		LEN(email) > 6 AND 
+		LEN(phone) > 8 AND
+		posture < 3 AND baggage < 3
+		)
+)
+
+CREATE TABLE Countries(
+	Id_Country NVARCHAR(3) PRIMARY KEY NOT NULL,  
+	country_name NVARCHAR(20) NOT NULL,
+)
+
+CREATE TABLE Planes(
+	Id_Plane INT PRIMARY KEY NOT NULL,
+	plane_name NVARCHAR(20) UNIQUE NOT NULL,
+	model NVARCHAR(20) NOT NULL,
+	capacity INT NOT NULL CHECK(capacity > 80 AND capacity < 200),
+	is_working BIT NOT NULL,
+	is_available BIT NOT NULL		
+)
+
+CREATE TABLE Pilots(
+	Id_Pilot INT PRIMARY KEY NOT NULL,
+	first_name NVARCHAR(20) NOT NULL,
+	last_name NVARCHAR(20) NOT NULL,
+	middle_name NVARCHAR(20) NOT NULL,
+	age INT CHECK(age > 18 AND age < 50),		
+	sallary INT,
+	Id_Plane INT FOREIGN KEY REFERENCES Planes(Id_Plane) NOT NULL 
+)
+
+CREATE TABLE Stewardess(
+	Id_Stewardess INT PRIMARY KEY NOT NULL,
+	first_name NVARCHAR(20) NOT NULL,
+	last_name NVARCHAR(20) NOT NULL,
+	middle_name NVARCHAR(20) NOT NULL,		
+	age INT CHECK(age > 18 AND age < 50),							
+	sallary INT,
+	Id_Plane INT FOREIGN KEY REFERENCES Planes(Id_Plane) NOT NULL
+)
+
+CREATE TABLE Flights(
+	Id_Flight INT PRIMARY KEY NOT NULL,				-- CurrentData + Id_Plane + Id_Country	
+	flight_name NVARCHAR(30) NOT NULL,
+	country_a NVARCHAR(3) FOREIGN KEY REFERENCES Countries(Id_Country) NOT NULL,
+	country_b NVARCHAR(3) FOREIGN KEY REFERENCES Countries(Id_Country) NOT NULL,
+	start_flight DATE NOT NULL,
+	end_flight DATE NOT NULL,
+	Id_Plane INT FOREIGN KEY REFERENCES Planes(Id_Plane) NOT NULL,
+	Id_Pilot INT NOT NULL
+)
+
+
+
+
+
+/*
+	Tables
+		Bussines Class
+		Econom Class 
+		Stewardess_Plane
+		Prim_Pilot
+		Second_Pilot
+		Salon
+
+
+	Cate locuri disponibile sunt
+
+	
+	
+	___ADD NOT NULL___
+
+	Determinarea pilotilor
+		Primary
+		Secondary
+
+
+	!!!
+		La bord sunt mai multe stewardese trebuie de rezolvat problema asta
+		Tabel unul la mai multi
+	!!!
+
+
+	Tipul calatoriei:
+		Dus-intors
+		Singura directie
+		Multisegment
+
+	
+	Clasa 
+		Econom		(E)
+		Bussiness	(B)
+		First		(F)
+
+
+	Info Pasageri +
+		Copil/Adult
+		Bagaj info
+
+	Info Zbor +
+		Pretul
+		Ora
+
+
+	functie care schimba state la avion in timpul zborului
+
+	In avion ai 200 de locuri
+	200 - n(clieti) * n(bilete)
+
+
+*/
+
+
